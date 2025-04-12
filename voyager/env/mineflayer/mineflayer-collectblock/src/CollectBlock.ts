@@ -1,5 +1,5 @@
 import { Bot } from "mineflayer";
-import { Block } from "prismarine-block";
+import { Block } from "mineflayer/node_modules/prismarine-block";
 import { Movements, goals } from "mineflayer-pathfinder";
 import { TemporarySubscriber } from "./TemporarySubscriber";
 import { Entity } from "prismarine-entity";
@@ -35,7 +35,8 @@ async function collectAll(
                         break;
                     }
                     await bot.tool.equipForBlock(
-                        closest as Block,
+                        // 添加类型断言，强制转换类型
+                        closest as any,
                         equipToolOptions
                     );
                     const goal = new goals.GoalLookAtBlock(
@@ -191,7 +192,8 @@ async function mineBlock(
         throw error("Unsafe block", "Block is not safe to break!");
     }
 
-    await bot.tool.equipForBlock(block, equipToolOptions);
+    // 添加类型断言，强制转换类型
+    await bot.tool.equipForBlock(block as any, equipToolOptions);
 
     if (!block.canHarvest(bot.heldItem ? bot.heldItem.type : bot.heldItem)) {
         options.targets.removeTarget(block);

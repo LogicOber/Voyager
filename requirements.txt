@@ -1,14 +1,27 @@
+# Basic dependencies
 tqdm
-langchain
-javascript
 setuptools
-openai
-chardet
-cchardet
-chromadb==0.3.29
-tiktoken
 requests
-setuptools
 gymnasium
 psutil
 minecraft_launcher_lib
+python-dotenv
+javascript
+chardet
+cchardet
+tiktoken
+
+# LangChain related dependencies
+langchain-community>=0.3.21
+langchain-openai>=0.3.12
+langchain-chroma>=0.2.2
+langchain>=0.3.23
+
+# Version-specific dependencies
+chromadb==0.3.29
+pydantic<2.0,>=1.9
+fastapi==0.85.1
+starlette==0.20.4
+
+# Debug output formatting
+rich

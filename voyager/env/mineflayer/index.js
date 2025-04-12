@@ -99,12 +99,17 @@ app.post("/start", (req, res) => {
         const tool = require("mineflayer-tool").plugin;
         const collectBlock = require("mineflayer-collectblock").plugin;
         const pvp = require("mineflayer-pvp").plugin;
-        const minecraftHawkEye = require("minecrafthawkeye");
+        const minecraftHawkEye = require("minecrafthawkeye").plugin;
         bot.loadPlugin(pathfinder);
         bot.loadPlugin(tool);
         bot.loadPlugin(collectBlock);
         bot.loadPlugin(pvp);
-        bot.loadPlugin(minecraftHawkEye);
+        // Check if plugin is a function before loading
+        if (typeof minecraftHawkEye === 'function') {
+            bot.loadPlugin(minecraftHawkEye);
+        } else {
+            console.log("Warning: minecraftHawkEye plugin is not a function, skipping");
+        }
 
         // bot.collectBlock.movements.digCost = 0;
         // bot.collectBlock.movements.placeCost = 0;

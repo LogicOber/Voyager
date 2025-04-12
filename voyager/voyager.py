@@ -4,8 +4,14 @@ import os
 import time
 from typing import Dict
 
+# Import dotenv for loading environment variables
+from dotenv import load_dotenv
+
 import voyager.utils as U
 from .env import VoyagerEnv
+
+# Load environment variables from .env file
+load_dotenv()
 
 from .agents import ActionAgent
 from .agents import CriticAgent
@@ -25,23 +31,23 @@ class Voyager:
         env_request_timeout: int = 600,
         max_iterations: int = 160,
         reset_placed_if_failed: bool = False,
-        action_agent_model_name: str = "gpt-4",
+        action_agent_model_name: str = os.environ.get("ACTION_AGENT_MODEL", "gpt-4o-2024-08-06"),
         action_agent_temperature: float = 0,
         action_agent_task_max_retries: int = 4,
         action_agent_show_chat_log: bool = True,
         action_agent_show_execution_error: bool = True,
-        curriculum_agent_model_name: str = "gpt-4",
+        curriculum_agent_model_name: str = os.environ.get("CURRICULUM_AGENT_MODEL", "gpt-4o-2024-08-06"),
         curriculum_agent_temperature: float = 0,
-        curriculum_agent_qa_model_name: str = "gpt-3.5-turbo",
+        curriculum_agent_qa_model_name: str = os.environ.get("CURRICULUM_QA_MODEL", "gpt-4o-2024-08-06"),
         curriculum_agent_qa_temperature: float = 0,
         curriculum_agent_warm_up: Dict[str, int] = None,
         curriculum_agent_core_inventory_items: str = r".*_log|.*_planks|stick|crafting_table|furnace"
         r"|cobblestone|dirt|coal|.*_pickaxe|.*_sword|.*_axe",
         curriculum_agent_mode: str = "auto",
-        critic_agent_model_name: str = "gpt-4",
+        critic_agent_model_name: str = os.environ.get("CRITIC_AGENT_MODEL", "gpt-4o-2024-08-06"),
         critic_agent_temperature: float = 0,
         critic_agent_mode: str = "auto",
-        skill_manager_model_name: str = "gpt-3.5-turbo",
+        skill_manager_model_name: str = os.environ.get("SKILL_MANAGER_MODEL", "gpt-4o-2024-08-06"),
         skill_manager_temperature: float = 0,
         skill_manager_retrieval_top_k: int = 5,
         openai_api_request_timeout: int = 240,
@@ -112,7 +118,14 @@ class Voyager:
         self.max_iterations = max_iterations
 
         # set openai api key
-        os.environ["OPENAI_API_KEY"] = openai_api_key
+        # First check if API key is provided directly
+        # If not, try to get it from environment variables (loaded from .env file)
+        if openai_api_key is not None:
+            os.environ["OPENAI_API_KEY"] = openai_api_key
+        elif "OPENAI_API_KEY" in os.environ and os.environ["OPENAI_API_KEY"]:
+            print("Using OpenAI API Key from environment variables (.env file)")
+        else:
+            raise ValueError("OpenAI API Key must be provided either as a parameter or in .env file")
 
         # init agents
         self.action_agent = ActionAgent(
